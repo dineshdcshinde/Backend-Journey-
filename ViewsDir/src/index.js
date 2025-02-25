@@ -19,8 +19,8 @@ app.get("/", (req, res) => {
 app.get(
   "/profile",
   (req, res, next) => {
-    console.log(5 + 5)
-    next()
+    console.log(5 + 5);
+    next();
   },
   (req, res) => {
     res.send("This page belongs to the profile page ");
