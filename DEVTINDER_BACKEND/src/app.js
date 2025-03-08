@@ -1,6 +1,18 @@
 const express = require("express");
 const app = express();
 const dbConnection = require("./db/db");
+const Authrouter = require("./Routes/Auth.routes");
+
+app.use(express.json());
+
+app.use("/devTinder", Authrouter);
+
+
+
+
+
+
+
 
 dbConnection()
   .then(() => {
@@ -12,3 +24,4 @@ dbConnection()
   .catch((err) => {
     res.status(500).send({ message: "failed", err: err });
   });
+
