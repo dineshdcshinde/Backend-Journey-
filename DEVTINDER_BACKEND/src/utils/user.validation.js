@@ -12,7 +12,6 @@ const validate = async (req) => {
     profilePicture,
     interest,
     bio,
-    sexualOrientation,
     lookingFor,
   } = req.body;
 
@@ -84,11 +83,6 @@ const validate = async (req) => {
     errors.push("Bio must be between 10 and 200 characters.");
   }
 
-  // sexualOrientation validation
-  if (!["straight", "gay", "bisexual", "other"].includes(sexualOrientation)) {
-    errors.push("Sexual orientation is not valid!");
-  }
-
   // lookingFor validations
   if (
     ![
@@ -106,7 +100,7 @@ const validate = async (req) => {
   }
 
   // if error present,
-  errors.length > 0 ? errors : null;
+  return errors.length > 0 ? errors : null;
 };
 
 module.exports = validate;

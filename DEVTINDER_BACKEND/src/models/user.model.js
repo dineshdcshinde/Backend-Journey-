@@ -2,13 +2,6 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      minLength: [3, "At least 3 characters are required"],
-      maxLength: [50, "At most 50 characters are required"],
-      trim: true,
-    },
     username: {
       type: String,
       required: true,
@@ -22,42 +15,56 @@ const userSchema = new mongoose.Schema(
       index: true,
       trim: true,
     },
+
+    email: {
+      unique: true,
+      type: String,
+      required: true,
+      index: true,
+      trim: true,
+      lowercase: true,
+    },
+
+    name: {
+      type: String,
+      required: true,
+      minLength: [3, "At least 3 characters are required"],
+      maxLength: [50, "At most 50 characters are required"],
+      trim: true,
+    },
+
     age: {
       type: Number,
       required: true,
       min: [18, "The minimum age is 18"],
     },
-    
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      index: true,
-      trim: true,
-      lowercase: true,
-    },
+
     password: {
       type: String,
       required: true,
       minLength: [8, "At least 8 characters are required"],
       trim: true,
     },
+
     location: {
       type: [String],
       required: true,
     },
+
     gender: {
       type: String,
       required: true,
       enum: ["male", "female", "other"],
       index: true,
     },
+
     profilePicture: {
       type: String,
       default:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhAq96S4rzot47qiaT2Q65A3Jc3vLAUaKWKA&s",
       trim: true,
     },
+
     interest: {
       type: [String],
       required: true,
@@ -70,6 +77,7 @@ const userSchema = new mongoose.Schema(
         message: "At least 3 and at most 10 interests are required",
       },
     },
+
     bio: {
       type: String,
       required: true,
@@ -77,11 +85,7 @@ const userSchema = new mongoose.Schema(
       minLength: [10, "At least 10 characters are required"],
       maxLength: [200, "At most 200 characters are required"],
     },
-    sexualOrientation: {
-      type: String,
-      required: true,
-      enum: ["straight", "gay", "bisexual", "other"],
-    },
+
     lookingFor: {
       type: String,
       required: true,
