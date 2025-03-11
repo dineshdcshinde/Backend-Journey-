@@ -2,17 +2,15 @@ const express = require("express");
 const app = express();
 const dbConnection = require("./db/db");
 const Authrouter = require("./Routes/Auth.routes");
+const cookieParser = require("cookie-parser")
 
 app.use(express.json());
 
+// reading for the cookies data
+app.use(cookieParser());
+
+
 app.use("/devTinder", Authrouter);
-
-
-
-
-
-
-
 
 dbConnection()
   .then(() => {
@@ -24,5 +22,3 @@ dbConnection()
   .catch((err) => {
     res.status(500).send({ message: "failed", err: err });
   });
-
-  

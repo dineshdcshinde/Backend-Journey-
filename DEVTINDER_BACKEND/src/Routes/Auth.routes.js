@@ -4,7 +4,9 @@ const Authrouter = express.Router();
 const userModel = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const userauth = require("../middlewares/userauth.middlewares");
 
+// /signup [post]
 Authrouter.post("/signup", async (req, res) => {
   /*
   1. validate (return statemement)
@@ -67,6 +69,7 @@ Authrouter.post("/signup", async (req, res) => {
   }
 });
 
+// login [post]
 Authrouter.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -93,7 +96,22 @@ Authrouter.post("/login", async (req, res) => {
       expiresIn: "7d",
     });
 
+    res.cookie("token", token);
+
     res.status(200).json({ message: "User Login Successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", errorOccurred: error.message });
+  }
+});
+
+// profile [get]
+Authrouter.get("/profile/view", userauth, async (req, res) => {
+  try {
+    const user = req.user;
+
+    res.status(200).json({ status: "success", data: user });
   } catch (error) {
     res
       .status(500)
