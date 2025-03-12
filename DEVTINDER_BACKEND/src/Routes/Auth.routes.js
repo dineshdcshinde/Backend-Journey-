@@ -119,4 +119,22 @@ Authrouter.get("/profile/view", userauth, async (req, res) => {
   }
 });
 
+// logout [post]
+Authrouter.post("/logout", userauth, async (req, res) => {
+  try {
+    // validate and get the user & token
+    const user = req.user;
+    const { token } = req.cookies;
+
+    // remove the token from the cookies
+    res.clearCookie("token");
+
+    res.status(200).json({ message: "User Logout Successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", errorOccurred: error.message });
+  }
+});
+
 module.exports = Authrouter;
