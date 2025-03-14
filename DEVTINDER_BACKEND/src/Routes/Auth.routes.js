@@ -5,6 +5,8 @@ const userModel = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const userauth = require("../middlewares/userauth.middlewares");
+const nodemailer = require("nodemailer");
+const validator = require("validator");
 
 // /signup [post]
 Authrouter.post("/signup", async (req, res) => {
@@ -73,8 +75,8 @@ Authrouter.post("/signup", async (req, res) => {
 Authrouter.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    // 1. Find the user and if it doesn't exist, then thorw error
 
+    // 1. Find the user and if it doesn't exist, then thorw error
     const user = await userModel.findOne({ email });
 
     if (!user) {
@@ -127,13 +129,107 @@ Authrouter.post("/logout", userauth, async (req, res) => {
     const { token } = req.cookies;
 
     // remove the token from the cookies
-    res.clearCookie("token");
+    res.clearCookie("token", { httpOnly: true, secure: true });
+    // only we want to pass the name of the token which we want to remove or clear
+    /*
+      httpOnly: true >> Not allow to steal the cookie with the js (document.cookie)
+      secure: true >> Only send the cookie over HTTPS (not HTTP)
+    */
 
     res.status(200).json({ message: "User Logout Successfully" });
   } catch (error) {
     res
       .status(500)
       .json({ error: "Internal Server Error", errorOccurred: error.message });
+  }
+});
+
+// ForgetPassword -[post] (protected)
+Authrouter.post("/forgetPassword", async (req, res) => {
+  try {
+    // get the email and find in the  & make the validations
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    if (!validator.isEmail(email)) {
+      return res
+        .status(400)
+        .json({ message: "Invalid Email. Enter the valid email" });
+    }
+
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generating the token
+
+    const resetToken = await jwt.sign(
+      { userId: user._id },
+      "ForgetPasswordTokenSecret",
+      { expiresIn: "15m" }
+    );
+
+    //  Creating the link and passing the token in that and sending it on the email with the nodemailer package
+    const resetLink = `http://localhost:3000/devTinder/resetPassword/${resetToken}`;
+
+    // need to add the nodemailer part
+
+    res.status(200).json({ message: "Reset Link is generated!!!", resetLink });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+});
+
+// ResetPassword - [patch]
+Authrouter.patch("/resetPassword/:token", async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { password, confirmPassword } = req.body;
+
+    // validate the password and confirmpassword
+    if (!password || !confirmPassword) {
+      return res
+        .status(400)
+        .json({ message: "Password and confirmPassword should be required." });
+    }
+
+    if (password !== confirmPassword) {
+      return res
+        .status(400)
+        .json({ message: "Password and confirmPassword should be same." });
+    }
+
+    // convert the password to the hash
+    const hashedPassword = await bcrypt.hash(confirmPassword, 10);
+
+    // token verify and get the userId
+    const decoded = await jwt.verify(token, "ForgetPasswordTokenSecret");
+
+    if (!decoded) {
+      return res.status(400).json({ message: "Token is invalid or expired." });
+    }
+
+    const userId = decoded.userId;
+
+    // findByIdAndUpdate
+    const passwordReset = await userModel.findByIdAndUpdate(userId, {
+      password: hashedPassword,
+    });
+
+    if (!passwordReset) {
+      return res
+        .status(400)
+        .json({ message: "Error while resetting the password" });
+    }
+
+    res.status(200).json({ message: "Password has been reset successfully." });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 });
 

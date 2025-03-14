@@ -6,6 +6,7 @@
 - Patch /devtinder/profile/update (protected)
 - Patch /devtinder/profile/password (protected)
 - Post /devtinder/logout (protected)
+- Post /devtinder/forgotPassword 
 
 ## Request Routes
 
