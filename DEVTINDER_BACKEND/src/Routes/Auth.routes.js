@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const userauth = require("../middlewares/userauth.middlewares");
 const nodemailer = require("nodemailer");
 const validator = require("validator");
+const { validProfileData } = require("../utils/validProfile.data");
 
 // /signup [post]
 Authrouter.post("/signup", async (req, res) => {
@@ -144,7 +145,7 @@ Authrouter.post("/logout", userauth, async (req, res) => {
   }
 });
 
-// ForgetPassword -[post] (protected)
+// ForgetPassword -[post]
 Authrouter.post("/forgetPassword", async (req, res) => {
   try {
     // get the email and find in the  & make the validations
@@ -230,6 +231,26 @@ Authrouter.patch("/resetPassword/:token", async (req, res) => {
     res.status(200).json({ message: "Password has been reset successfully." });
   } catch (error) {
     return res.status(500).json({ message: error.message });
+  }
+});
+
+//  updateProfileData - [patch] (protected)
+Authrouter.patch("/profile/update", userauth, async (req, res) => {
+  try {
+    if (!validProfileData(req)) {
+      return res.status(400).json({ message: "Invalid profile data" });
+    }
+    const userLoggedIn = req.user;
+
+    Object.keys(req.body).forEach((key) => (userLoggedIn[key] = req.body[key]));
+
+    await userLoggedIn.save();
+
+    res.status(200).json({ message: "Profile updated successfully" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: err.message });
   }
 });
 
