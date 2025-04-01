@@ -219,7 +219,7 @@ Authrouter.patch("/resetPassword/:token", async (req, res) => {
 
     // findByIdAndUpdate
     const passwordReset = await userModel.findByIdAndUpdate(userId, {
-      password: hashedPassword,
+      password: hashedPassword,   
     });
 
     if (!passwordReset) {

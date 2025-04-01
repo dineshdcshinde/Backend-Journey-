@@ -1,14 +1,14 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const dbConnection = require("./db/db");
 const Authrouter = require("./Routes/Auth.routes");
-const cookieParser = require("cookie-parser")
+const cookieParser = require("cookie-parser");
 
 app.use(express.json());
 
 // reading for the cookies data
 app.use(cookieParser());
-
 
 app.use("/devTinder", Authrouter);
 
