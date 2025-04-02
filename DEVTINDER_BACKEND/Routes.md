@@ -4,7 +4,7 @@
 - Post /devtinder/signup ✅
 - Post /devtinder/login (protected) ✅
 - Get /devtinder/profile/view (protected) ✅
-- Patch /devtinder/profile/update (protected)
+- Patch /devtinder/profile/update (protected) ✅
 <!-- - Patch /devtinder/profile/password (protected) -->
 - Post /devtinder/logout (protected) ✅
 - Post /devtinder/forgotPassword ✅

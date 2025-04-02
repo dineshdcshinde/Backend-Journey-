@@ -42,6 +42,6 @@ export const validProfileData = (req) => {
     isAllowedFeild.includes(feild)
   );
 
-  console.log(isEditAllowed)
+  // console.log(isEditAllowed)
   return isEditAllowed;
 };

@@ -4,6 +4,7 @@ const app = express();
 const dbConnection = require("./db/db");
 const Authrouter = require("./Routes/Auth.routes");
 const cookieParser = require("cookie-parser");
+const Requestrouter = require("./Routes/Request.routes");
 
 app.use(express.json());
 
@@ -11,6 +12,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/devTinder", Authrouter);
+
+app.use("/devTinder/request", Requestrouter)
 
 dbConnection()
   .then(() => {
