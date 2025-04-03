@@ -13,6 +13,10 @@ app.use(cookieParser());
 
 app.use("/devTinder", Authrouter);
 
+// Sending the connection request
+app.use("/devTinder/request", Requestrouter)
+
+// Reviewing the connection request
 app.use("/devTinder/request", Requestrouter)
 
 dbConnection()

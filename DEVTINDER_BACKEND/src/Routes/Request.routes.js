@@ -15,15 +15,6 @@ Requestrouter.post("/send/:status/:toUserId", userauth, async (req, res) => {
     // we are getting the fromUserId from req.user._id
     const fromUserId = req.user._id;
 
-    // Check if that toUserId exists or not
-    const isUserExistInDB = await userModel.findById(toUserId);
-    if (!isUserExistInDB) {
-      return res.status(404).json({
-        status: "failure",
-        message: "User not found",
-      });
-    }
-
     // validate the status
     const validStatuses = ["ignored", "interested"];
     if (!validStatuses.includes(status)) {
@@ -38,6 +29,15 @@ Requestrouter.post("/send/:status/:toUserId", userauth, async (req, res) => {
       return res.status(400).json({
         status: "failure",
         message: "Please provide a valid userId",
+      });
+    }
+
+    // Check if that toUserId exists or not
+    const isUserExistInDB = await userModel.findById(toUserId);
+    if (!isUserExistInDB) {
+      return res.status(404).json({
+        status: "failure",
+        message: "User not found",
       });
     }
 
@@ -76,6 +76,69 @@ Requestrouter.post("/send/:status/:toUserId", userauth, async (req, res) => {
     res.status(200).json({ message: "success", connection });
   } catch (err) {
     console.log(err);
+    res.status(500).send({ message: "failed", err: err.message });
+  }
+});
+
+// From reciever side
+
+Requestrouter.post("/review/:status/:requestId", userauth, async (req, res) => {
+  try {
+    // validate the user
+    const loggedInUser = req.user;
+
+    // validate the status
+    const { status, requestId } = req.params;
+
+    const validStatuses = ["accepted", "rejected"];
+
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        status: "failed",
+        message: `${status} status is not allowed`,
+      });
+    }
+
+    // requestId
+    if (!mongoose.Types.ObjectId.isValid(requestId)) {
+      return res
+        .status(400)
+        .json({ status: "failed", message: "Invalid request id" });
+    }
+
+    const connectionRequest = await ConnectionModel.findOne({
+      _id: requestId,
+      toUserId: loggedInUser._id,
+      status: "interested",
+    });
+
+    if (!connectionRequest) {
+      return res.status(404).json({
+        status: "failed",
+        message: "Connection request not found",
+      });
+    }
+
+    connectionRequest.status = status;
+
+    const data = await connectionRequest.save();
+
+    res.status(200).json({
+      status: "success",
+      data,
+    });
+
+    /* 
+    validate the status 
+    - check whether it is ["accepted", "rejected"]
+  
+    requestId validations - 
+      - requestId is the valid or not
+      - check whether the requestId is in the database or not
+      - check whether the requestId is already accepted or not
+      - only that request will came that has the interested status 
+    */
+  } catch (err) {
     res.status(500).send({ message: "failed", err: err.message });
   }
 });

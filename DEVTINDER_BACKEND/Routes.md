@@ -13,13 +13,15 @@
 
 (From sender side)
 
-- Post /request/send/interested/:userId (protected)
-- Post /request/send/ignored/:userId (protected)
+<!-- - Post /request/send/interested/:userId (protected)
+- Post /request/send/ignored/:userId (protected) -->
+- Post /devTinder/request/:status/:userId (protected)
 
 (From Receiver side)
 
-- Post /request/review/accept/:requestid (protected)
-- Post /request/review/reject/:requestid (protected)
+<!-- - Post /request/review/accept/:requestid (protected)
+- Post /request/review/reject/:requestid (protected) -->
+- /devTinder/request/review/:status/:requestId (protected)
 
 ### Connection request
 
