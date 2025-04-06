@@ -112,6 +112,7 @@ Requestrouter.post("/review/:status/:requestId", userauth, async (req, res) => {
       status: "interested",
     });
 
+    // check whether the requestId is in the database or not
     if (!connectionRequest) {
       return res.status(404).json({
         status: "failed",
