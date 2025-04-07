@@ -34,5 +34,5 @@
 - Get /devTinder/connections/requests/recieved (protected)
 - Get /devTinder/connections/allConnections [Only the connections that has the accepted status] (protected)
 
-### Feed Api
-- Get /feed (protected) { It will grab the user's or profiles for you }
+### Feed Api / core api
+- Get devTinder/core/feed (protected) { It will grab the user's or profiles for you }

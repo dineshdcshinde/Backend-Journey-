@@ -6,6 +6,7 @@ const Authrouter = require("./Routes/Auth.routes");
 const cookieParser = require("cookie-parser");
 const Requestrouter = require("./Routes/Request.routes");
 const UserConnectionRouter = require("./Routes/UserConnections.routes");
+const CoreRouter = require("./Routes/Core.routes");
 
 app.use(express.json());
 
@@ -22,6 +23,9 @@ app.use("/devTinder/request", Requestrouter);
 
 // connections route
 app.use("/devTinder/connections", UserConnectionRouter);
+
+// core route / feed route
+app.use("/devTinder/core", CoreRouter)
 
 dbConnection()
   .then(() => {
